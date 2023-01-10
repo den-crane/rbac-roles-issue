@@ -37,14 +37,13 @@ print("Iterations: %d" % iterations)
 print("")
 
 for iter in range(iterations):
-  if iter % 100==99: print("Iteration: %s" % iter)
+  if iter % 100 == 99: print("Iteration: %s" % iter)
 
   table_name = "test." + TBLNAMEPREFIX + str(iter)
   clientDefault.execute("create table if not exists %s %s" % (table_name, TBLTEMPLATE))
 
   # chaos / randomly drop some table from the previous iteration
-  rand = random.randint(1,2)
-  if rand == 1 and iter > 5:
+  if random.randint(1,2) == 1 and iter > 5:
      tableToDrop = "test." + TBLNAMEPREFIX + str(iter - 3)
      clientDefault.execute("drop table if exists %s" % tableToDrop)
 
