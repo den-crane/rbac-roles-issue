@@ -1,5 +1,6 @@
 # rbac-roles-issue
 
+Naive test to reproduce https://github.com/ClickHouse/ClickHouse/issues/34412
 
 ## initialize
 
