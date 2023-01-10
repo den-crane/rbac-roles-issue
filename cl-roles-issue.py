@@ -1,16 +1,20 @@
 from clickhouse_driver import Client
 import random
 
-print("##### Init Stage ######")
-
 clientDefault = Client('localhost', user='default', password='abc')
 
-print(clientDefault.execute('select version(), user()'))
+print("##### Cleaning Stage ######")
+clientDefault.execute("drop database if exists test")
+clientDefault.execute("drop role if exists testrole")
+clientDefault.execute("drop user if exists testuser")
 
+print("##### Init Stage ######")
+print(clientDefault.execute('select version(), user()'))
 clientDefault.execute("create user if not exists testuser identified by 'abc'")
 clientDefault.execute("create role if not exists testrole")
 clientDefault.execute("grant testrole to testuser")
-#clientDefault.execute("drop database if exists test")
+
+
 clientDefault.execute("create database if not exists test Engine=Atomic")
 
 # create 100 roles
@@ -36,6 +40,13 @@ for iter in range(iterations):
   if rand == 1 and iter > 5:
      tableToDrop = iter - 3
      clientDefault.execute("drop table if exists test.test%s" % tableToDrop)
+
+  # chaos / randomly try to read probably not available table
+  rand = random.randint(1,10)
+  try:
+     clientProbe.execute("select * from test.test%s"  % rand)
+  except Exception:
+    pass
 
   clientDefault.execute("grant select on test.test%s to testrole" % iter)
   #rand = random.randint(1,50)
