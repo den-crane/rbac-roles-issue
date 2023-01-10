@@ -11,14 +11,13 @@ clientDefault.execute("create user if not exists testuser identified by 'abc'")
 clientDefault.execute("create role if not exists testrole")
 clientDefault.execute("grant testrole to testuser")
 #clientDefault.execute("drop database if exists test")
-clientDefault.execute("create database if not exists test Engine=Memory")
+clientDefault.execute("create database if not exists test Engine=Atomic")
 
 # create 100 roles
 for iter in range(100):
     clientDefault.execute("create role if not exists testrole%s" % iter)
 
 clientProbe = Client('localhost', user='testuser', password='abc', database='test')
-
 print(clientProbe.execute('select version(), user()'))
 
 print("##### Test Stage ######")
@@ -41,7 +40,7 @@ for iter in range(iterations):
   clientDefault.execute("grant select on test.test%s to testrole" % iter)
 
   # check access through the role
-  clientProbe.execute("select count() from test.test%s"  % iter)
+  clientProbe.execute("select * from test.test%s"  % iter)
 
   # more chaos / drop some roles
   rand = random.randint(1,50)
