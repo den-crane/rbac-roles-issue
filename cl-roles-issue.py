@@ -56,7 +56,7 @@ for iter in range(iterations):
      clientDefault.execute("drop table if exists test.test%s" % tableToDrop)
 
   # more chaos / grant access to random role on random table, most them does not exists
-  # it just to produce errors
+  # it's just to produce errors and create random chaos
   randtable = random.randint(1,500)
   randrole = random.randint(1,100)
   try:
