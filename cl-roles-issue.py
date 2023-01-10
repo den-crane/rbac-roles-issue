@@ -51,9 +51,9 @@ for iter in range(iterations):
      clientDefault.execute("drop table if exists %s" % tableToDrop)
 
   # chaos / randomly try to read probably not available table
-  rand = random.randint(1,10)
+  table_name = "test." + TBLNAMEPREFIX + str(random.randint(1,10))
   try:
-     clientProbe.execute("select * from test.test%s"  % rand)
+     clientProbe.execute("select * from %s"  % table_name)
   except Exception:
     pass
 
