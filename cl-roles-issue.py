@@ -37,7 +37,7 @@ print("Iterations: %d" % iterations)
 print("")
 
 for iter in range(iterations):
-  if iter % 100==0: print("Iteration: %s" % iter)
+  if iter % 100==99: print("Iteration: %s" % iter)
 
   table_name = "test." + TBLNAMEPREFIX + str(iter)
   clientDefault.execute("create table if not exists %s %s" % (table_name, TBLTEMPLATE))
