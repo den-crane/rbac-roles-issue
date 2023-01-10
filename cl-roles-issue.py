@@ -49,11 +49,21 @@ for iter in range(iterations):
   rand = random.randint(1,50)
   clientDefault.execute("drop role if exists testrole%s" % rand)
 
-  # drop more tables
+  # more chaos / drop more tables
   rand = random.randint(1,5)
   if rand == 1 and iter > 5:
      tableToDrop = iter - 2
      clientDefault.execute("drop table if exists test.test%s" % tableToDrop)
+
+  # more chaos / grant access to random role on random table, most them does not exists
+  # it just to produce errors
+  randtable = random.randint(1,500)
+  randrole = random.randint(1,100)
+  try:
+    clientDefault.execute("grant select on test.test%d to testrole%d" % (randtable, randrole))
+  except Exception:
+    pass
+
 
   # check that default and testuser have acess to the same number of tables
   cnt1 = clientDefault.execute("select count() from system.tables where database = 'test'")[0][0]
