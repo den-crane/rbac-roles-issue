@@ -38,6 +38,9 @@ for iter in range(iterations):
      clientDefault.execute("drop table if exists test.test%s" % tableToDrop)
 
   clientDefault.execute("grant select on test.test%s to testrole" % iter)
+  #rand = random.randint(1,50)
+  #if rand == 1:
+  #     clientDefault.execute("revoke select on test.test%s from testrole" % iter)
 
   # check access through the role
   clientProbe.execute("select * from test.test%s"  % iter)
@@ -45,10 +48,19 @@ for iter in range(iterations):
   # more chaos / drop some roles
   rand = random.randint(1,50)
   clientDefault.execute("drop role if exists testrole%s" % rand)
+
+  # drop more tables
   rand = random.randint(1,5)
   if rand == 1 and iter > 5:
      tableToDrop = iter - 2
      clientDefault.execute("drop table if exists test.test%s" % tableToDrop)
+
+  # check that default and testuser have acess to the same number of tables
+  cnt1 = clientDefault.execute("select count() from system.tables where database = 'test'")[0][0]
+  cnt2 = clientProbe.execute("select count() from system.tables where database = 'test'")[0][0]
+  if cnt1 != cnt2:
+      exceptionMessage = "Number of available tables is inconsistent: %d, %d" % (cnt1, cnt2)
+      raise Exception(exceptionMessage)
 
 #print("##### Cleaning Stage ######")
 #clientDefault.execute("drop database if exists test")
