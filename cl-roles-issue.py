@@ -51,12 +51,13 @@ for iter in range(iterations):
      clientDefault.execute("drop table if exists %s" % tableToDrop)
 
   # chaos / randomly try to read probably not available table
-  table_name = "test." + TBLNAMEPREFIX + str(random.randint(1,10))
+  rand_table_name = "test." + TBLNAMEPREFIX + str(random.randint(1,10))
   try:
-     clientProbe.execute("select * from %s"  % table_name)
+     clientProbe.execute("select * from %s"  % rand_table_name)
   except Exception:
     pass
 
+  # check access with default user
   clientDefault.execute("grant select on %s to %s" % (table_name, RLNAME))
 
   # check access through the role
