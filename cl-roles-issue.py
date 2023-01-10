@@ -29,7 +29,7 @@ for iter in range(iterations):
   if iter % 100==0:
       print("iteration: %s" % iter)
 
-  clientDefault.execute("create table if not exists test.test%s(a Int64) Engine=MergeTree order by a" % iter)
+  clientDefault.execute("create table if not exists test.test%s(a Int64) Engine=MergeTree order by a as select 1" % iter)
 
   # chaos / randomly drop some table from the previous iteration
   rand = random.randint(1,2)
@@ -49,14 +49,14 @@ for iter in range(iterations):
   rand = random.randint(1,50)
   clientDefault.execute("drop role if exists testrole%s" % rand)
 
-  # more chaos / drop more tables
+  # more chaos / drop more tables (drop just accessed table)
   rand = random.randint(1,5)
-  if rand == 1 and iter > 5:
-     tableToDrop = iter - 2
+  if rand == 1:
+     tableToDrop = iter
      clientDefault.execute("drop table if exists test.test%s" % tableToDrop)
 
-  # more chaos / grant access to random role on random table, most them does not exists
-  # it's just to produce errors and create random chaos
+  # more chaos / grant access to acrandom role on a random table, most them do not exist
+  # it's just to produce errors and create the random chaos
   randtable = random.randint(1,500)
   randrole = random.randint(1,100)
   try:
@@ -64,8 +64,7 @@ for iter in range(iterations):
   except Exception:
     pass
 
-
-  # check that default and testuser have acess to the same number of tables
+  # check that default and testuser have an acess to the same number of tables
   cnt1 = clientDefault.execute("select count() from system.tables where database = 'test'")[0][0]
   cnt2 = clientProbe.execute("select count() from system.tables where database = 'test'")[0][0]
   if cnt1 != cnt2:
