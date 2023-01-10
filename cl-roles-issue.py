@@ -20,7 +20,6 @@ clientDefault.execute("create user if not exists testuser identified by 'abc'")
 clientDefault.execute("create role if not exists %s" % RLNAME)
 clientDefault.execute("grant %s to testuser" % RLNAME)
 
-
 clientDefault.execute("create database if not exists test Engine=Atomic")
 
 # create 100 roles, to make chaos
@@ -38,8 +37,7 @@ print("Iterations: %d" % iterations)
 print("")
 
 for iter in range(iterations):
-  if iter % 100==0:
-      print("Iteration: %s" % iter)
+  if iter % 100==0: print("Iteration: %s" % iter)
 
   table_name = "test." + TBLNAMEPREFIX + str(iter)
   clientDefault.execute("create table if not exists %s %s" % (table_name, TBLTEMPLATE))
